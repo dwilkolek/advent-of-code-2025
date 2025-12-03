@@ -3,6 +3,37 @@
 #include <stdlib.h>
 #include <_string.h>
 
+short int is_valid_pattern_of_n(char *text_number, int pattern_l) {
+    int len = strlen(text_number);
+    if (len % pattern_l != 0) {
+        return 0;
+    }
+    char pattern[pattern_l];
+    strncpy(pattern, text_number, pattern_l);
+    const int chunks = len / pattern_l;
+    // printf("pattern: %s\n", pattern);
+    int is_valid = 1;
+    for (int pattern_i = 0; pattern_i < chunks; pattern_i++) {
+        char compare[pattern_l];
+        strncpy(compare, text_number + pattern_i * pattern_l, pattern_l);
+        // printf("compare: %s\n", compare);
+        if (strcmp(pattern, compare) != 0) {
+            is_valid = 0;
+            break;
+        }
+    }
+    return is_valid;
+}
+
+short int is_valid_pattern(char *text_number) {
+    // printf("text_number: %s\n", text_number);
+    int len = strlen(text_number);
+
+    for (int pattern_l = 1; pattern_l <= len / 2; pattern_l++) {
+        if (is_valid_pattern_of_n(text_number, pattern_l) == 1) return 1;
+    }
+    return 0;
+}
 
 int main(void) {
     char *line = NULL;
@@ -14,70 +45,29 @@ int main(void) {
 
     getline(&line, &len, stream);
     char *token;
-    long long sum = 0;
+    long long part1 = 0;
+    long long part2 = 0;
     while ((token = strsep(&line, ","))) {
         long long int start;
         long long int end;
-        // 26255179562
         if (sscanf(token, "%lli-%lli", &start, &end) == 2) {
-            // 3395595155
-            printf("%s\n", token);
-            char start_as_s[1000];
-            char end_as_s[1000];
-            sprintf(start_as_s, "%li", start);
-            sprintf(end_as_s, "%li", end);
-            int power_start = strlen(start_as_s) / 2;
-            int power_end = strlen(end_as_s) / 2;
-
-            for (int power_base_i = power_start; power_base_i <= power_end; power_base_i++) {
-                if (power_base_i == 0) continue;
-                const int power_base = pow(10, power_base_i);
-                // printf("power base: %d\n", power_base);
-
-                for (long long int start_p = start / power_base; start_p <= end / power_base; start_p++) {
-                    const long long pattern_number = start_p * power_base + start_p;
-                    char pattern_as_s[1000];
-                    sprintf(pattern_as_s, "%lli", pattern_number);
-                    if (pattern_number >= start && pattern_number <= end && strlen(pattern_as_s) % 2 == 0) {
-                        sum = sum + pattern_number;
-                        printf("\t pattern: %lli\n", pattern_number);
-                    }
+            for (long long int start_p = start; start_p <= end; start_p++) {
+                char pattern_as_s[1000];
+                sprintf(pattern_as_s, "%lli", start_p);
+                if (strlen(pattern_as_s) % 2 == 0 &&
+                    is_valid_pattern_of_n(pattern_as_s, strlen(pattern_as_s) / 2) == 1) {
+                    part1 = part1 + start_p;
+                }
+                if (is_valid_pattern(pattern_as_s) == 1) {
+                    part2 = part2 + start_p;
                 }
             }
-
-            //     const int str_len = strlen(str);
-            //     for (int i = start; i <= end; i++) {
-            //         sprintf(str, "%d", i);
-            //         const int str_len = strlen(str);
-            //         if (str_len % 2 == 0) {
-            //             const int half_size = str_len/2;
-            //             int p = 0;
-            //             for ( p=0; p < half_size; p++) {
-            //                 if (str[p] != str[p + half_size]) {
-            //                     break;
-            //                 }
-            //             }
-            //
-            //             if (p == half_size) {
-            //                 sum += i;
-            //             }
-            //         }
-            //
-            //     }
         }
     }
 
-    printf("Part 1: %lli\n", sum);
+    printf("Part 1: %lli\n", part1);
+    printf("Part 2: %lli\n", part2);
     free(line);
     fclose(stream);
     exit(EXIT_SUCCESS);
-}
-
-int countDigits(int n) {
-    int count = 0;
-    while (n != 0) {
-        n /= 10; // Reduce the number by a factor of ten
-        count++; // Increment count for each reduction
-    }
-    return count;
 }
