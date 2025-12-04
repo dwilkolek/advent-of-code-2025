@@ -4,6 +4,33 @@
 #include <_string.h>
 
 
+int remove_rolls(int size, char lines[140][140]) {
+    int removed = 0;
+    char array_new[140][140];
+    memcpy(array_new, lines, sizeof(char)*140*140);
+
+    for (int y = 1; y < size; y++) {
+        for (int x = 1; x < size; x++) {
+            const int up_left = array_new[y - 1][x - 1] == '@';
+            const int up_mid = array_new[y - 1][x] == '@';
+            const int up_right = array_new[y - 1][x + 1] == '@';
+
+            const int bottom_left = array_new[y + 1][x - 1] == '@';
+            const int bottom_mid = array_new[y + 1][x] == '@';
+            const int bottom_right = array_new[y + 1][x + 1] == '@';
+
+            const int mid_right = array_new[y][x + 1] == '@';
+            const int mid_left = array_new[y][x - 1] == '@';
+            const int sum = up_left + up_mid + up_right + bottom_left + bottom_mid + bottom_right + mid_right + mid_left;
+            if (array_new[y][x] == '@' && sum < 4) {
+                removed++;
+                lines[y][x] = 'x';
+            }
+        }
+    }
+    return removed;
+}
+
 int main(void) {
     char *line = NULL;
     size_t len = 0;
@@ -26,50 +53,24 @@ int main(void) {
         }
         size++;
     }
-    for (int y = 1; y < size; y++) {
-        for (int x = 1; x < size; x++) {
-            printf("%c", lines[y][x]);
-        }
-        printf("\n");
-    }
-
-    printf("\n");
-
-    printf("\n");
-
-    printf("\n");
-    int part1 = 0;
-    for (int y = 1; y < size; y++) {
-        for (int x = 1; x < size; x++) {
-            int up_left = lines[y - 1][x - 1] == '@';
-            int up_mid = lines[y - 1][x] == '@';
-            int up_right = lines[y - 1][x + 1] == '@';
-
-            int bottom_left = lines[y + 1][x - 1] == '@';
-            int bottom_mid = lines[y + 1][x] == '@';
-            int bottom_right = lines[y + 1][x + 1] == '@';
-
-            int mid_right = lines[y][x + 1] == '@';
-            int mid_left = lines[y][x - 1] == '@';
-            int sum = up_left+ up_mid + up_right + bottom_left + bottom_mid + bottom_right + mid_right + mid_left;
-            if (lines[y][x] == '@' && sum < 4) {
-                part1++;
-                // printf("x");
-            } else {
-                // printf("%c", lines[y][x]);
-            }
-        }
-        // printf("\n");
-    }
-
-    // for (int y = 0; y <= size; y++) {
-    //     for (int x = 0; x <= size; x++) {
+    // for (int y = 1; y < size; y++) {
+    //     for (int x = 1; x < size; x++) {
     //         printf("%c", lines[y][x]);
     //     }
     //     printf("\n");
     // }
 
+    const int part1 = remove_rolls(size, lines);
+    int part2 = 0;
+    int removed = 0;
+    do {
+        removed = remove_rolls(size, lines);
+        part2 += removed;
+    } while (removed != 0);
+
+
     printf("Part 1: %d\n", part1);
+    printf("Part 2: %d\n", part2 + part1);
     free(line);
     fclose(stream);
     exit(EXIT_SUCCESS);
