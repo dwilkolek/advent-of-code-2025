@@ -26,7 +26,7 @@ int main(void) {
         if ('*' == line[0] || '+' == line[0]) {
             int word_i = 0;
             for (int i = 0; i < strlen(line); i++) {
-                printf("char[%d]: %c = %d\n", i, line[i], (int)line[i]);
+                // printf("char[%d]: %c = %d\n", i, line[i], (int)line[i]);
 
                 if ('*' == line[i] || '+' == line[i]) {
                     if (word_i == 0) {
@@ -59,7 +59,7 @@ int main(void) {
                 }
                 strncpy(worksheet[row][word_i], line + offsets[word_i], buf_size);
             }
-            printf("%s\n", worksheet[row][word_i]);
+            // printf("%s\n", worksheet[row][word_i]);
         }
         row++;
         if (ops_line) {
@@ -71,65 +71,65 @@ int main(void) {
         char operator = ops[i];
         long long int value = atoi(worksheet[0][i]);
 
-        printf("%lli", value);
+        // printf("%lli", value);
         for (int j = 1; j < row - 1; j++) {
             int n_v = atoi(worksheet[j][i]);
             if (operator == '*') {
                 value *= n_v;
-                printf(" * %d", n_v);
+                // printf(" * %d", n_v);
             } else {
                 value += n_v;
-                printf(" + %d", n_v);
+                // printf(" + %d", n_v);
             }
         }
         part1 += value;
-        printf("= %lli => %lli\n", value, part1);
+        // printf("= %lli => %lli\n", value, part1);
     }
 
-    // long long int part2 = 0;
-    // for (int i = 0; i < token_count; i++) {
-    //     char operator = ops[i];
-    //
-    //     int max_len = 0;
-    //     for (int j = 0; j < row - 1; j++) {
-    //         if (max_len < strlen(worksheet[j][i])) {
-    //             max_len = strlen(worksheet[j][i]);
-    //         }
-    //     }
-    //     long long int value = -1;
-    //     for (int k = 0; k < max_len; k++) {
-    //         char new_value[1000] = "";
-    //         for (int j = 0; j < row - 1; j++) {
-    //             const int old_wrks_value_len = strlen(worksheet[j][i]);
-    //             if (k < strlen(worksheet[j][i])) {
-    //                 const int new_value_len = strlen(new_value);
-    //                 new_value[new_value_len] = worksheet[j][i][old_wrks_value_len - k - 1];
-    //                 new_value[new_value_len + 1] = '\0';
-    //             }
-    //         }
-    //
-    //
-    //         if (value == -1) {
-    //             value = atoi(new_value);
-    //             printf("%s", new_value);
-    //         } else {
-    //             if (operator == '*') {
-    //                 value *= atoi(new_value);
-    //                 printf(" * %d", atoi(new_value));
-    //             } else {
-    //                 value += atoi(new_value);
-    //                 printf(" + %d", atoi(new_value));
-    //             }
-    //         }
-    //     }
-    //
-    //
-    //     printf(" = %lli\n", value);
-    //     part2 += value;
-    // }
+    long long int part2 = 0;
+    for (int i = 0; i < token_count; i++) {
+        char operator = ops[i];
+
+        int max_len = 0;
+        for (int j = 0; j < row - 1; j++) {
+            if (max_len < strlen(worksheet[j][i])) {
+                max_len = strlen(worksheet[j][i]);
+            }
+        }
+        long long int value = -1;
+        for (int k = 0; k < max_len; k++) {
+            char new_value[1000] = "";
+            for (int j = 0; j < row - 1; j++) {
+                const int old_wrks_value_len = strlen(worksheet[j][i]);
+                if (k < strlen(worksheet[j][i])) {
+                    const int new_value_len = strlen(new_value);
+                    new_value[new_value_len] = worksheet[j][i][old_wrks_value_len - k - 1];
+                    new_value[new_value_len + 1] = '\0';
+                }
+            }
+
+
+            if (value == -1) {
+                value = atoi(new_value);
+                // printf("%s", new_value);
+            } else {
+                if (operator == '*') {
+                    value *= atoi(new_value);
+                    // printf(" * %d", atoi(new_value));
+                } else {
+                    value += atoi(new_value);
+                    // printf(" + %d", atoi(new_value));
+                }
+            }
+        }
+
+
+        // printf(" = %lli\n", value);
+        part2 += value;
+    }
 
     printf("Part 1: %lli\n", part1);
-    // printf("Part 2: %lli\n", part2);
+    printf("Part 2: %lli\n", part2);
 
     free(line);
     fclose(stream);
